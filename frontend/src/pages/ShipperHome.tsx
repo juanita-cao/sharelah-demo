@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import type { CargoFlag, HazardClass, LoadVM, TempClass } from "../api/types";
 import { useApi, useSession } from "../app/contexts";
 import { useApiMutation, useStateQuery } from "../app/hooks";
+import { useAnnouncer } from "../app/useAnnouncer";
 import { Chips, MultiChips, Stepper } from "../components/inputs";
 import { HazardBadge, TempBadge, hhmm, money } from "../components/common";
 import { COMPANIES } from "../data/companies";
@@ -38,6 +39,7 @@ export function ShipperHome() {
     queryKey: ["estimate", v?.origin, v?.destination, v?.pallets, v?.tempClass, v?.hazardClass ?? null, v?.exclusive ?? false], enabled: ready, placeholderData: keepPreviousData,
     queryFn: () => api.quoteEstimate({ origin: v!.origin!, destination: v!.destination!, pallets: v!.pallets, tempClass: v!.tempClass, hazardClass: v!.hazardClass ?? null, exclusive: v?.exclusive ?? false }),
   });
+  const { announce } = useAnnouncer();
   const post = useApiMutation((f: FormValues) => api.postLoad({ exclusive: f.exclusive ?? false, companyId: company.id, origin: f.origin!, destination: f.destination!, pallets: f.pallets, weightKg: f.weightKg, tempClass: f.tempClass, hazardClass: f.hazardClass ?? null, flags: f.flags ?? [], pickupFromMin: toMin(f.pickup), deliverByMin: toMin(f.deliver) }));
 
   const mine = useMemo(() => (state.data?.loads ?? []).filter((l) => l.companyId === company.id).sort((a, b) => b.loadId.localeCompare(a.loadId)), [state.data, company.id]);
@@ -48,7 +50,7 @@ export function ShipperHome() {
   const windowMin = v?.pickup && v?.deliver ? toMin(v.deliver) - toMin(v.pickup) : null;
   const tight = est.data && windowMin !== null && windowMin < est.data.driveMin + 30;
 
-  const submit = (f: FormValues) => post.mutate(f, { onSuccess: (r) => { void message.success(t("shipper.received")); setPick(r.loadId); setTab("SHIPMENTS"); }, onError: () => void message.error(t("error.generic")) });
+  const submit = (f: FormValues) => post.mutate(f, { onSuccess: (r) => { announce("sent", r.loadId, t("alert.sentTitle"), t("alert.sentText", { id: r.loadId })); setPick(r.loadId); setTab("SHIPMENTS"); }, onError: () => void message.error(t("error.generic")) });
   const mapPlaces = tab === "SEND" ? (ready ? { origin: v!.origin!, destination: v!.destination! } : null) : shown ? { origin: shown.origin, destination: shown.destination } : null;
 
   return (

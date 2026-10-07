@@ -225,3 +225,8 @@ tr.recommended td { background: #EFF8FF; font-weight: 600; }
 .share-capacity .cargo-row > div, .share-capacity .ant-select { min-width: 0; }
 .shipment-top > span { display: inline-flex; gap: 6px; align-items: center; }
 .ship-tabs .ant-segmented-item-label { font-size: 13px; padding-inline: 6px; white-space: nowrap; }
+
+/* the tracker stays inside its card: five steps share the card width instead of each taking its title's width */
+.shipment { overflow: hidden; }
+.ship-steps { display: flex; width: 100%; box-sizing: border-box; } .ship-steps .ant-steps-item { flex: 1 1 0; min-width: 0; overflow: visible; } .ship-steps .ant-steps-item:last-child { flex: 0 0 auto; }
+.ship-steps .ant-steps-item-title { white-space: nowrap; }

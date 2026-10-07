@@ -1,11 +1,12 @@
 import { Alert, App, Button, Empty, Form, Input, InputNumber, Segmented, Select, Switch, Tag, TimePicker } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import dayjs, { type Dayjs } from "dayjs";
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CargoFlag, LoadVM, OfferVM, TempClass } from "../api/types";
 import { useApi, useSession } from "../app/contexts";
 import { useApiMutation, useSimNow, useStateQuery } from "../app/hooks";
+import { useAnnouncer } from "../app/useAnnouncer";
 import { TempBadge, money } from "../components/common";
 import { Chips, Stepper } from "../components/inputs";
 import { PLACES, placeName } from "../data/places";
@@ -80,6 +81,16 @@ export function CarrierHome() {
       void liveQ.refetch();
     }).catch(() => void message.error(t("error.generic")));
   };
+  const { announce } = useAnnouncer();
+  const known = useRef<{ company: string; ids: Set<string> } | null>(null);
+  useEffect(() => {                                                   // a new opportunity appears: ring once for it (what was already shown when the page opened stays quiet)
+    if (!cd) return;
+    const ids = new Set(cd.pending.map((j) => j.load_id));
+    const before = known.current && known.current.company === company.id ? known.current.ids : null;
+    known.current = { company: company.id, ids };
+    if (!before || !online) return;
+    for (const j of cd.pending) if (!before.has(j.load_id)) announce("request", `${company.id}:${j.load_id}`, t("alert.newTitle"), t("alert.newText", { route: `${placeName(j.origin)} → ${placeName(j.destination)}`, pallets: j.pallets, amount: money(j.net_incremental) }));
+  }, [cd, company.id, online]);   // eslint-disable-line react-hooks/exhaustive-deps
   const direct = (d?.offers ?? []).filter((o) => o.companyId === company.id && o.status === "SHOWN");
   const reply = useApiMutation((v: { o: OfferVM; response: "ACCEPT" | "DECLINE" }) => api.respond(v.o.offerId, { response: v.response, expectedVersion: v.o.version, epoch: d?.epoch ?? 1 }).then((r) => ({ ...r, response: v.response })));
   const answerDirect = (o: OfferVM, response: "ACCEPT" | "DECLINE") => reply.mutate({ o, response }, { onSuccess: (r) => void (r.status === "ACCEPTED" ? message.success(t("opp.taken1")) : r.status === "DECLINED" ? message.info(t("opp.declined1")) : message.warning(t("direct.stale", { s: r.status }))) });

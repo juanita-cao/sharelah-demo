@@ -1,4 +1,4 @@
-import { BarChartOutlined, CarOutlined, LineChartOutlined, DashboardOutlined, DeploymentUnitOutlined, DownOutlined, EnvironmentOutlined, HistoryOutlined, MenuFoldOutlined, MenuUnfoldOutlined, ReadOutlined, SettingOutlined, ShopOutlined, SyncOutlined } from "@ant-design/icons";
+import { MutedOutlined, SoundOutlined, BarChartOutlined, CarOutlined, LineChartOutlined, DashboardOutlined, DeploymentUnitOutlined, DownOutlined, EnvironmentOutlined, HistoryOutlined, MenuFoldOutlined, MenuUnfoldOutlined, ReadOutlined, SettingOutlined, ShopOutlined, SyncOutlined } from "@ant-design/icons";
 import { useIsFetching } from "@tanstack/react-query";
 import { App, Button, Dropdown, Tooltip } from "antd";
 import { useEffect, useState, type ReactNode } from "react";
@@ -8,6 +8,8 @@ import type { ActorKind } from "../api/types";
 import { HOME, allowed } from "../data/access";
 import { useApi, useSession } from "../app/contexts";
 import { useApiMutation, useStateQuery } from "../app/hooks";
+import { useRoleAlerts } from "../app/useRoleAlerts";
+import { installAudioUnlock, setSoundEnabled, soundEnabled, playAlert } from "../lib/alerts";
 import { LanguageSwitch } from "../components/LanguageSwitch";
 import { MockBanner } from "../components/MockBanner";
 import { USE_MOCK } from "../config/featureFlags";
@@ -18,6 +20,13 @@ const NAV: Record<ActorKind, { to: string; key: string; icon: ReactNode }[]> = {
   CARRIER: [{ to: "/driver", key: "nav.jobs", icon: <CarOutlined /> }, { to: "/dashboard", key: "nav.dashboard", icon: <DashboardOutlined /> }, { to: "/history", key: "nav.history", icon: <HistoryOutlined /> }, { to: "/guide", key: "nav.guide", icon: <ReadOutlined /> }, { to: "/simulation", key: "nav.simulation", icon: <LineChartOutlined /> }],
   OPERATOR: [{ to: "/control-tower", key: "nav.controlTower", icon: <DeploymentUnitOutlined /> }, { to: "/analysis", key: "nav.analysis", icon: <BarChartOutlined /> }, { to: "/map", key: "nav.map", icon: <EnvironmentOutlined /> }, { to: "/settings", key: "nav.settings", icon: <SettingOutlined /> }, { to: "/guide", key: "nav.guide", icon: <ReadOutlined /> }, { to: "/simulation", key: "nav.simulation", icon: <LineChartOutlined /> }],
 };
+
+function SoundSwitch() {
+  const { t } = useTranslation();
+  const [on, setOn] = useState(soundEnabled());
+  useEffect(() => installAudioUnlock(), []);
+  return <Tooltip title={on ? t("sound.on") : t("sound.off")}><Button type="text" aria-label={on ? t("sound.on") : t("sound.off")} aria-pressed={on} icon={on ? <SoundOutlined /> : <MutedOutlined />} onClick={() => { const n = !on; setOn(n); setSoundEnabled(n); if (n) playAlert("sent"); }} /></Tooltip>;
+}
 
 function SyncIndicator() {
   const { t } = useTranslation();
@@ -35,6 +44,7 @@ export function AppShell() {
   const { message, modal } = App.useApp();
   const { company, companies, setCompanyId, setKind } = useSession();
   const state = useStateQuery();
+  useRoleAlerts();
   const [collapsed, setCollapsed] = useState(() => loadUiPrefs().sidebarCollapsed);
   const { pathname } = useLocation();
   const reset = useApiMutation(() => api.reset(), ["state", "options", "job"]);
@@ -49,6 +59,7 @@ export function AppShell() {
         {topNav && <nav className="top-nav" aria-label="main">{NAV[company.kind].map((i) => <NavLink key={i.to} to={i.to} className={({ isActive }) => `top-nav-item${isActive ? " active" : ""}`}>{i.icon}<span>{t(i.key)}</span></NavLink>)}</nav>}
         <div className="app-header-actions">
           <SyncIndicator />
+          <SoundSwitch />
           <LanguageSwitch />
           <Dropdown trigger={["click"]} menu={{ selectedKeys: [company.kind], items: (["OPERATOR", "SHIPPER", "CARRIER"] as ActorKind[]).map((k) => ({ key: k, label: t(`shell.role.${k}`) })), onClick: ({ key }) => setKind(key as ActorKind) }}>
             <button type="button" className="role-switch" aria-label={t("shell.pickRole")}>{t(`shell.role.${company.kind}`)} <DownOutlined /></button>

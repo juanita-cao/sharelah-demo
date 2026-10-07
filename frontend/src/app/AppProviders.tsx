@@ -30,7 +30,7 @@ function Themed({ palette, children }: { palette: Palette; children: ReactNode }
         components: { Card: { headerBg: "#FFFFFF" }, Button: { fontWeight: 600, primaryShadow: "none" } },
       }}
     >
-      <AntApp>{children}</AntApp>
+      <AntApp notification={{ top: 64 }}>{children}</AntApp>
     </ConfigProvider>
   );
 }

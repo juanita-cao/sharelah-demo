@@ -30,13 +30,13 @@ interface Job { id: string; startedAt: number; floor: boolean; cancelled: boolea
 interface Preview { candidateId: string; loadId: string; optionId: string; epoch: number; after: KpiVM }
 
 export class MockWorld {
-  epoch = 1; version = new Map<string, number>(); loads: LoadVM[] = []; offers: (OfferVM & { createdAt: number })[] = []; posts: CapacityPostVM[] = []; capacityOffers: CapacityOfferVM[] = [];
+  epoch = 1; declined = new Map<string, Set<string>>(); version = new Map<string, number>(); loads: LoadVM[] = []; offers: (OfferVM & { createdAt: number })[] = []; posts: CapacityPostVM[] = []; capacityOffers: CapacityOfferVM[] = [];
   vehicles: VehicleVM[] = []; price: PriceTableVM; jobs = new Map<string, Job>(); previews = new Map<string, Preview>(); private seq = 108; private t0 = Date.now(); private improvement = 0; private pinned: KpiVM | null = null; private trend = seedTrend(); private lastKey = ""; private matchedAt = new Map<string, number>();  // after an apply the KPIs equal the preview's "after" until something else changes
   constructor() { this.price = defaultPrice(); this.reset(); }
 
   reset(): number {
     this.epoch += 1; this.t0 = Date.now(); this.seq = 108; this.jobs.clear(); this.previews.clear(); this.improvement = 0; this.pinned = null; this.matchedAt.clear();
-    this.vehicles = VEHICLES.map((v) => ({ ...v })); this.offers = []; this.posts = []; this.capacityOffers = [];
+    this.vehicles = VEHICLES.map((v) => ({ ...v })); this.offers = []; this.declined = new Map(); this.posts = []; this.capacityOffers = [];
     const mk = (n: number, o: string, d: string, p: number, kg: number, t: TempClass, status: LoadVM["status"], co: string, extra: Partial<LoadVM> = {}): LoadVM => ({
       loadId: `L-0${n}`, companyId: co, origin: o, destination: d, lane: `${placeName(o)} → ${placeName(d)}`, pallets: p, weightKg: kg, tempClass: t, hazardClass: null, flags: [],
       status, urgent: false, ageSec: 30 + n * 7, pickupFromMin: 600, deliverByMin: 1080, etaMin: null, quote: null, vehicleId: null, reasonCode: null, exclusive: false, homeCarrierId: null, customer: null, ...extra,
@@ -150,6 +150,7 @@ export class MockWorld {
       if (v.type === "DRY_VAN" && load.tempClass !== "AMB") codes.push("TEMP_INCOMPATIBLE");
       if (load.hazardClass && !v.dgCapable) codes.push("VEHICLE_NOT_DG_CAPABLE");
       if (!v.shared && v.carrierId !== load.homeCarrierId) codes.push("NOT_SHARED");   // a truck the carrier keeps out of the pool serves only that carrier's own customers
+      if (this.declined.get(loadId)?.has(v.carrierId)) codes.push("CARRIER_DECLINED");   // a carrier that said no to this load is not offered it again
       if (v.freePallets < load.pallets) codes.push("CAPACITY_PALLETS");
       if (hash(load.loadId + v.vehicleId + "w") < 0.1) codes.push("TIME_WINDOW");
       if (codes.length) { excluded.push({ vehicleId: v.vehicleId, codes }); continue; }
@@ -201,7 +202,7 @@ export class MockWorld {
     if (Math.floor((Date.now() - o.createdAt) / 1000) >= o.expiresInSec) { o.status = "EXPIRED"; return { status: "EXPIRED" }; }
     const load = this.loads.find((l) => l.loadId === o.loadId);
     if (response === "DECLINE") this.pinned = null;   // an acceptance changes no number: the approval preview already showed it
-    if (response === "ACCEPT") { o.status = "ACCEPTED"; if (load) load.status = "CONFIRMED"; } else { o.status = "DECLINED"; if (load) { load.status = "RECEIVED"; load.vehicleId = null; load.quote = null; } }
+    if (response === "ACCEPT") { o.status = "ACCEPTED"; if (load) load.status = "CONFIRMED"; } else { o.status = "DECLINED"; if (load) { const v = this.vehicles.find((x) => x.vehicleId === load.vehicleId); if (v) v.freePallets += load.pallets; load.status = "RECEIVED"; load.vehicleId = null; load.quote = null; load.etaMin = null; this.declined.set(load.loadId, (this.declined.get(load.loadId) ?? new Set()).add(o.companyId)); } }   // back to the operator queue; the truck gets its space back
     o.version += 1;
     return { status: o.status };
   }

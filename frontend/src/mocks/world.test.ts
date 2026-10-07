@@ -35,3 +35,21 @@ describe("what each actor may see on the map (mock backend contract)", () => {
     expect(ev.t).toBeGreaterThanOrEqual(w2.nowMin() - 1);
   });
 });
+
+describe("a carrier that declines an approved load", () => {
+  it("sends it back to the operator queue, frees the truck and is not offered the load again", () => {
+    const w = new MockWorld();
+    const load = w.loads.find((l) => l.status === "RECEIVED")!;
+    const opt = w.options(load.loadId, "BALANCED").rows[0];
+    const before = w.vehicles.find((v) => v.vehicleId === opt.vehicleId)!.freePallets;
+    const ver = w.version.get(load.loadId) ?? 1;
+    const r = w.approve(load.loadId, opt.optionId, "apply", w.epoch, ver) as { status: string; offerId: string };
+    expect(r.status).toBe("APPLIED");
+    expect(w.respond(r.offerId, "DECLINE", 1, w.epoch).status).toBe("DECLINED");
+    expect(w.state().queue.some((l) => l.loadId === load.loadId)).toBe(true);
+    expect(w.vehicles.find((v) => v.vehicleId === opt.vehicleId)!.freePallets).toBe(before);
+    const again = w.options(load.loadId, "BALANCED");
+    expect(again.rows.every((o) => o.carrierId !== opt.carrierId)).toBe(true);
+    expect(again.excluded.some((e) => e.vehicleId === opt.vehicleId && e.codes.includes("CARRIER_DECLINED"))).toBe(true);
+  });
+});
