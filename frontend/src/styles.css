@@ -230,3 +230,51 @@ tr.recommended td { background: #EFF8FF; font-weight: 600; }
 .shipment { overflow: hidden; }
 .ship-steps { display: flex; width: 100%; box-sizing: border-box; } .ship-steps .ant-steps-item { flex: 1 1 0; min-width: 0; overflow: visible; } .ship-steps .ant-steps-item:last-child { flex: 0 0 auto; }
 .ship-steps .ant-steps-item-title { white-space: nowrap; }
+
+/* ---- phone (390 px and up to 720 px) ----
+   The header keeps the logo and the few controls that matter; the navigation moves to a bar at the bottom of the screen where the thumb is; pages use the full width. */
+@media (max-width: 720px) {
+  .app-header { padding: 0 12px; gap: 8px; }
+  .app-header-brand .brand-logo { height: 34px; }
+  .app-header-actions { gap: 2px; min-width: 0; }
+  .sync-indicator { display: none; }
+  .company-name { display: none; }
+  .company-switch { max-width: 96px; padding: 0 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .company-switch > span:first-child { overflow: hidden; text-overflow: ellipsis; }
+  .role-switch { padding: 5px 9px; }
+
+  .app-main { padding-bottom: 64px; }
+  .app-content, .app-content.wide, .app-shell[data-role="OPERATOR"] .app-content { padding: 12px; }
+  .app-content.wide { padding: 0; }
+  .app-status { padding-bottom: 20px; }
+
+  /* the navigation bar at the bottom: shipper and carrier tabs, and the operator console's pages (that bar scrolls sideways) */
+  .top-nav, .app-sidebar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; width: 100% !important; margin: 0; background: #fff; border: 0; border-top: 1px solid var(--line); box-shadow: 0 -4px 16px rgba(15,23,42,0.06); padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); }
+  .top-nav { display: flex; justify-content: space-around; gap: 0; }
+  .top-nav-item { flex: 1; flex-direction: column; gap: 2px; padding: 6px 2px; border-radius: 12px; font-size: 11px; text-align: center; min-width: 0; }
+  .top-nav-item .anticon { font-size: 20px; }
+  .top-nav-item span:not(.anticon) { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .app-sidebar { flex-direction: row; justify-content: flex-start; overflow-x: auto; }
+  .app-sidebar ul { display: flex; }
+  .app-sidebar .app-nav-item, .app-sidebar.collapsed .app-nav-item { flex-direction: column; gap: 2px; padding: 6px 12px; margin: 0 2px; font-size: 11px; white-space: nowrap; justify-content: center; }
+  .app-sidebar .app-nav-item .anticon { font-size: 20px; }
+  .app-sidebar-toggle { display: none; }
+
+  /* cards, tables and charts never push the page wider than the screen */
+  .ant-card-body, .ant-table-wrapper, .ant-modal-body { overflow-x: auto; }
+  .ant-modal { max-width: calc(100vw - 16px) !important; margin: 8px auto; }
+  .ant-notification { width: calc(100vw - 16px) !important; margin-inline-end: 8px !important; }
+  .page-head { flex-wrap: wrap; gap: 8px; }
+  .map-toolbar { flex-wrap: wrap; gap: 8px; } .map-toolbar .tb-group { flex-wrap: wrap; }
+  .ship-map { height: 260px !important; }
+  .kpi-grid, .kpi-grid.four, .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .job-actions .ant-btn { min-height: 48px; }          /* thumb-size buttons for Take / Decline */
+  .cta { min-height: 52px; }
+  /* grid children may shrink below their content, so a wide chart or a long route line scrolls or wraps inside its card instead of widening the page */
+  .app-content [class*="grid"] > *, .app-content .two-col > *, .replay-wrap > *, .ship-layout > * { min-width: 0; }
+  .app-content .ant-card { max-width: 100%; }
+  .chart-grid.three, .chart-grid.two { grid-template-columns: minmax(0, 1fr); }
+  .page-pad { padding: 4px 0; }
+  .queue-row, .shipment-route { overflow-wrap: anywhere; }
+  .ship-tabs .ant-segmented-item-label { padding: 0 4px; font-size: 13px; }
+}
