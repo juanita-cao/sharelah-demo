@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import type { CarrierDay, SimJob } from "../lib/sim";
 import { TempBadge, hhmm, money } from "../components/common";
 import { placeName } from "../data/places";
-import type { TempClass } from "../api/types";
+import type { OfferVM, TempClass } from "../api/types";
 
 // What the platform found for the carrier's spare capacity (Opportunity). Money first: what the job adds to the carrier's pocket, then what it costs
 // (the detour) and what it does to the carrier's own deliveries. The carrier decides; nothing is taken for it.
@@ -74,6 +74,30 @@ export function EarningsCard({ realised, delivered, onRoad, pending, estimate, t
         </div>
       )}
       <div className="earn-note">{t("earn.estimateHow")}</div>
+    </div>
+  );
+}
+
+// A load a shipper posted and the operator approved for this carrier: it arrives as a request to answer within a few minutes (the same offer the operator's approval created).
+export function DirectRequests({ offers, onAnswer, busy }: { offers: OfferVM[]; onAnswer: (o: OfferVM, response: "ACCEPT" | "DECLINE") => void; busy: boolean }) {
+  const { t } = useTranslation();
+  if (offers.length === 0) return null;
+  return (
+    <div style={{ marginBottom: 12 }}>
+      <div className="sect">{t("direct.title", { n: offers.length })}</div>
+      {offers.map((o) => (
+        <div key={o.offerId} className="job-card">
+          <div className="job-top">
+            <div><div className="job-route">{placeName(o.originId)} <span>→</span> {placeName(o.destinationId)}</div><div className="muted">{o.loadId} · {o.pallets} {t("unit.pallets")} · {t("direct.expires", { s: o.expiresInSec })}</div></div>
+            <div style={{ textAlign: "right" }}><div className="muted">{t("opp.youEarn")}</div><b className="opp-net" style={{ color: "#16A34A" }}>{money(o.earningsEstimate)}</b></div>
+          </div>
+          <div className="job-chips"><TempBadge temp={o.tempClass} /><Tag>{t("opp.detour", { km: Math.round(o.detourKm), min: o.extraMin })}</Tag>{o.isBackhaul && <Tag color="green">{t("direct.backhaul")}</Tag>}</div>
+          <div className="job-actions" style={{ display: "flex", gap: 8 }}>
+            <Button type="primary" size="large" style={{ flex: 1 }} loading={busy} onClick={() => onAnswer(o, "ACCEPT")}>{t("opp.take")} · {money(o.earningsEstimate)}</Button>
+            <Button size="large" disabled={busy} onClick={() => onAnswer(o, "DECLINE")}>{t("opp.decline")}</Button>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

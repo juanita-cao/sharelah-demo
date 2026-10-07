@@ -1,5 +1,5 @@
 export const zh: Record<string, string | string[]> = {
-  "nav.simulation": "模拟收益", "sim.map.title": "路上的卡车 · 第 {{d}} 天", "sim.map.with": "有平台", "sim.map.without": "没有平台", "sim.map.shared": "载着共享订单", "sim.map.counts": "{{trucks}} 辆车中 {{moving}} 辆在路上 · {{shared}} 辆载着共享订单", "sim.daysLabel": "实时", "sim.daysUnit": "天(最多 {{max}} 天)", "sim.recorded": "已录制 · {{n}} 天", "sim.runLive": "实时运行", "sim.recordedTag": "已录制", "sim.liveProgress": "实时 · 已算 {{k}} / {{n}} 天", "sim.liveDone": "实时 · {{n}} 天",
+  "nav.simulation": "模拟收益", "sim.map.title": "路上的卡车 · 第 {{d}} 天", "sim.map.with": "有共享", "sim.map.without": "无共享", "sim.map.shared": "载着共享订单", "sim.map.counts": "{{trucks}} 辆车中 {{moving}} 辆在路上 · {{shared}} 辆载着共享订单", "sim.daysLabel": "实时", "sim.daysUnit": "天(最多 {{max}} 天)", "sim.recorded": "已录制 · {{n}} 天", "sim.runLive": "实时运行", "sim.recordedTag": "已录制", "sim.liveProgress": "实时 · 已算 {{k}} / {{n}} 天", "sim.liveDone": "实时 · {{n}} 天",
   "sim.needServer": "Live simulation needs the demo backend, which is not part of this static demo.", "sim.busy": "另一个实时模拟正在运行,请稍后再试。", "sim.waiting": "正在计算第一天…", "sim.noData": "这个模拟月里没有你们公司的数据。", "sim.mine": "你们公司",
   "sim.kpi.extraMine": "你多赚的钱", "sim.kpi.servedMine": "你承运的货物", "sim.kpi.jobsMine": "你接的共享订单", "sim.kpi.upliftMine": "你的净增收",
   "sim.today.myJobs": "今天你接的共享订单", "sim.today.myExtra": "今天你多赚的钱", "sim.pallet1": "{{n}} 托盘", "sim.palletN": "{{n}} 托盘",
@@ -33,6 +33,7 @@ export const zh: Record<string, string | string[]> = {
   "ship.truckChoice": "哪种车?", "ship.shared": "共享车厢", "ship.sharedNote": "你的货可以和别的货同车。价格更低。", "ship.dedicated": "独享整车", "ship.dedicatedNote": "从取货到送达,车上只有你的货。",
   "ship.dedicatedDiff": "共享车厢要 {{shared}};独享整车多收 {{extra}}。", "ship.line.DEDICATED": "独享整车",
   "opp.replayNote": "实时演示服务没有运行:这是录制的一天的回放,你的回答只保存在这个页面。", "opp.liveIntro": "实时演示日,模拟时间 {{time}}。平台每小时找一次货;你的回答由后端执行。",
+  "direct.title": "派给你的订单（{{n}}）", "direct.expires": "请在 {{s}} 秒内答复", "direct.backhaul": "顺路回程", "direct.stale": "答复没有生效（{{s}}），请求可能已过期。",
   "opp.ffwd": "快进 1 小时", "opp.stale": "这个机会在展示之后发生了变化,我们已重新计算。请看新的那一条。", "opp.expired": "这个机会在你回答之前已经过期。", "opp.reset": "这个机会展示之后,演示被重置了。",
   "opp.result.ALREADY_RESPONDED": "你已经回答过这个机会。", "opp.result.OFFER_NOT_FOUND": "这个机会已不存在。",
   "sim.daysUnitStatic": "天(录制的一个月共 {{max}} 天)", "opp.replayStatic": "这是按录制回放的演示日:机会是模拟的真实结果,你的回答只保存在这个页面。",

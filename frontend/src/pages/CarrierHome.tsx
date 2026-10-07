@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import dayjs, { type Dayjs } from "dayjs";
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { CargoFlag, LoadVM, TempClass } from "../api/types";
+import type { CargoFlag, LoadVM, OfferVM, TempClass } from "../api/types";
 import { useApi, useSession } from "../app/contexts";
 import { useApiMutation, useSimNow, useStateQuery } from "../app/hooks";
 import { TempBadge, money } from "../components/common";
@@ -11,7 +11,7 @@ import { Chips, Stepper } from "../components/inputs";
 import { PLACES, placeName } from "../data/places";
 import { LIVE_SERVER } from "../config/live";
 import { carrierDay, fromSession, loadSimulation, type SimJob } from "../lib/sim";
-import { EarningsCard, OpportunitiesTab } from "./Opportunities";
+import { DirectRequests, EarningsCard, OpportunitiesTab } from "./Opportunities";
 import { ShareCapacity } from "./ShareCapacity";
 
 const RoleMap = lazy(() => import("../components/RoleMap"));   // the map library loads only when this page is opened
@@ -80,6 +80,9 @@ export function CarrierHome() {
       void liveQ.refetch();
     }).catch(() => void message.error(t("error.generic")));
   };
+  const direct = (d?.offers ?? []).filter((o) => o.companyId === company.id && o.status === "SHOWN");
+  const reply = useApiMutation((v: { o: OfferVM; response: "ACCEPT" | "DECLINE" }) => api.respond(v.o.offerId, { response: v.response, expectedVersion: v.o.version, epoch: d?.epoch ?? 1 }).then((r) => ({ ...r, response: v.response })));
+  const answerDirect = (o: OfferVM, response: "ACCEPT" | "DECLINE") => reply.mutate({ o, response }, { onSuccess: (r) => void (r.status === "ACCEPTED" ? message.success(t("opp.taken1")) : r.status === "DECLINED" ? message.info(t("opp.declined1")) : message.warning(t("direct.stale", { s: r.status }))) });
   const fastForward = () => { if (liveQ.data) void api.sessionAdvance(liveQ.data.now_min + 60).then(() => liveQ.refetch()); };
 
   return (
@@ -91,8 +94,9 @@ export function CarrierHome() {
         </div>
         <EarningsCard realised={cd?.realised ?? 0} delivered={cd?.done.length ?? 0} onRoad={cd?.inProgress.length ?? 0} pending={cd?.pending.length ?? 0} estimate={estimate} trucksOpen={sharedTrucks.length} trucks={fleet.length} />
         <Segmented block className="ship-tabs" value={tab} onChange={(x) => setTab(x as Tab)}
-          options={[{ value: "OPPS", label: `${t("carrier.tab.opportunities")}${cd && cd.pending.length ? ` (${cd.pending.length})` : ""}` }, { value: "SHARING", label: t("carrier.tab.sharing") }, { value: "REFER", label: t("carrier.tab.refer") }, { value: "JOBS", label: t("carrier.tab.jobs") }]} />
+          options={[{ value: "OPPS", label: `${t("carrier.tab.opportunities")}${(cd?.pending.length ?? 0) + direct.length ? ` (${(cd?.pending.length ?? 0) + direct.length})` : ""}` }, { value: "SHARING", label: t("carrier.tab.sharing") }, { value: "REFER", label: t("carrier.tab.refer") }, { value: "JOBS", label: t("carrier.tab.jobs") }]} />
 
+        {tab === "OPPS" && <DirectRequests offers={direct} onAnswer={answerDirect} busy={reply.isPending} />}
         {tab === "OPPS" && <OpportunitiesTab cd={cd} online={online} pick={shown?.load_id ?? null} setPick={setPick} onTake={(j) => answer(j, "ACCEPT")} onDecline={(j) => answer(j, "DECLINE")} toleranceMin={TOLERANCE_MIN} dayLabel={t("sim.day", { d: dayIndex + 1 })} live={live} replay={replay} liveServer={LIVE_SERVER} nowMin={liveQ.data?.now_min ?? null} onFastForward={fastForward} />}
 
         {tab === "SHARING" && <ShareCapacity companyId={company.id} fleet={fleet} offers={capacityOffers} />}
