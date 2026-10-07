@@ -7,6 +7,7 @@ export function createHandlers(baseUrl: string, world = new MockWorld(), latency
   const ok = async <T,>(body: T) => { await delay(latencyMs); return HttpResponse.json(body as never); };
   // a coded refusal of the backend (HTTP 422 with the code), the way the screens map it to a field message
   const guarded = async <T,>(f: () => T) => { try { return await ok(f()); } catch (e) { if (e instanceof MockRejection) { await delay(latencyMs); return HttpResponse.json({ code: e.code }, { status: 422 }); } throw e; } };
+  const withGeo = async () => { if (!world.geo) world.geo = await (await fetch("/network_geometry.json")).json(); };   // the tariff of the price shown to the shipper needs the road distances
   return [
     http.get(u("/api/state"), () => ok(world.state())),
     http.post(u("/api/loads"), async ({ request }) => ok(world.postLoad((await request.json()) as never))),
@@ -14,9 +15,10 @@ export function createHandlers(baseUrl: string, world = new MockWorld(), latency
     http.delete(u("/api/capacity-offers/:id"), ({ params }) => guarded(() => world.withdrawOffer(String(params.id)))),
     http.get(u("/api/vehicles/:id/free-space"), ({ params, request }) => { const p = new URL(request.url).searchParams; return guarded(() => world.freeSpace(String(params.id), Number(p.get("from")), Number(p.get("to")))); }),
     http.post(u("/api/capacity-posts"), async ({ request }) => ok(world.postCapacity((await request.json()) as never))),
-    http.get(u("/api/loads/:id/options"), ({ params, request }) => ok(world.options(String(params.id), (new URL(request.url).searchParams.get("profile") ?? "BALANCED") as Profile))),
+    http.get(u("/api/loads/:id/options"), async ({ params, request }) => { await withGeo(); return ok(world.options(String(params.id), (new URL(request.url).searchParams.get("profile") ?? "BALANCED") as Profile)); }),
     http.post(u("/api/loads/:id/approve"), async ({ params, request }) => {
       const b = (await request.json()) as { optionId: string; epoch: number; expectedVersion: number; mode: "preview" | "apply" };
+      await withGeo();
       return ok(world.approve(String(params.id), b.optionId, b.mode, b.epoch, b.expectedVersion));
     }),
     http.post(u("/api/events/urgent"), () => ok(world.urgent())),

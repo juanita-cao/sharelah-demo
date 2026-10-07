@@ -30,6 +30,7 @@ interface Job { id: string; startedAt: number; floor: boolean; cancelled: boolea
 interface Preview { candidateId: string; loadId: string; optionId: string; epoch: number; after: KpiVM }
 
 export class MockWorld {
+  geo: Pick<Geometry, "nodes" | "dist_km" | "time_min"> | null = null;   // set by the handlers: the price the shipper was shown is computed from it
   epoch = 1; declined = new Map<string, Set<string>>(); version = new Map<string, number>(); loads: LoadVM[] = []; offers: (OfferVM & { createdAt: number })[] = []; posts: CapacityPostVM[] = []; capacityOffers: CapacityOfferVM[] = [];
   vehicles: VehicleVM[] = []; price: PriceTableVM; jobs = new Map<string, Job>(); previews = new Map<string, Preview>(); private seq = 108; private t0 = Date.now(); private improvement = 0; private pinned: KpiVM | null = null; private trend = seedTrend(); private lastKey = ""; private matchedAt = new Map<string, number>();  // after an apply the KPIs equal the preview's "after" until something else changes
   constructor() { this.price = defaultPrice(); this.reset(); }
@@ -144,6 +145,8 @@ export class MockWorld {
     const load = this.loads.find((l) => l.loadId === loadId);
     if (!load) throw new Error("unknown load");
     const w = WEIGHTS[profile];
+    // the price is the one the shipper was shown when it posted the load (the same tariff), whichever truck serves it; the carrier is paid that, less the platform fee
+    const listed = this.geo ? this.estimate(this.geo, { origin: load.origin, destination: load.destination, pallets: load.pallets, tempClass: load.tempClass, hazardClass: load.hazardClass, exclusive: false }).price : null;
     const rows: OptionRowVM[] = []; const excluded: ExcludedVM[] = [];
     for (const v of this.vehicles) {
       const codes: string[] = [];
@@ -155,10 +158,10 @@ export class MockWorld {
       if (hash(load.loadId + v.vehicleId + "w") < 0.1) codes.push("TIME_WINDOW");
       if (codes.length) { excluded.push({ vehicleId: v.vehicleId, codes }); continue; }
       const r = hash(load.loadId + v.vehicleId);
-      const extraKm = round(4 + r * 55, 1), extraCost = round(extraKm * (v.type === "DRY_VAN" ? 1.1 : 1.6) + 30 + hash(load.loadId + v.vehicleId + "k") * 60, 0);
+      const extraKm = round(4 + r * 55, 1), extraCost = round(extraKm * (v.type === "DRY_VAN" ? 1.1 : 1.6) + 4 + hash(load.loadId + v.vehicleId + "k") * 12, 0);
       const co2 = round(extraKm * (v.type === "DRY_VAN" ? 0.19 : 0.27) * (0.5 + hash(load.loadId + v.vehicleId + "c") * 1.3), 1);
       rows.push({ optionId: `O-${load.loadId}-${v.vehicleId}`, rank: 0, vehicleId: v.vehicleId, carrierId: v.carrierId, extraKm, extraCost, co2, utilDelta: round(0.1 + r * 0.35, 2),
-        slackMin: Math.round(15 + (1 - r) * 80), isBackhaul: r < 0.28, quote: round(extraCost * 1.35 + 20, 0), scoreParts: { cost: extraCost, emptyKm: extraKm, co2 } });
+        slackMin: Math.round(15 + (1 - r) * 80), isBackhaul: r < 0.28, quote: listed ?? round(extraCost * 1.35 + 20, 0), scoreParts: { cost: extraCost, emptyKm: extraKm, co2 } });
     }
     const score = (o: OptionRowVM) => w.cost * o.extraCost + w.empty * o.extraKm * 2 + w.co2 * o.co2 * 5 - (o.isBackhaul ? 12 : 0);
     rows.sort((a, b) => score(a) - score(b) || a.optionId.localeCompare(b.optionId));
@@ -188,7 +191,7 @@ export class MockWorld {
     this.version.set(loadId, expectedVersion + 1);
     const v = this.vehicles.find((x) => x.vehicleId === opt.vehicleId); if (v) v.freePallets = Math.max(0, v.freePallets - load.pallets);
     this.matchedAt.set(loadId, this.nowMin());
-    const offer = { offerId: `F-${loadId}`, loadId, companyId: opt.carrierId, lane: load.lane, originId: load.origin, destinationId: load.destination, pallets: load.pallets, tempClass: load.tempClass, detourKm: opt.extraKm, extraMin: Math.round(opt.extraKm * 2.3), earningsEstimate: round(opt.quote * (1 - this.price.takeRate - this.price.referralRate), 0), tempFit: true, isBackhaul: opt.isBackhaul, expiresInSec: 180, status: "SHOWN" as const, version: 1, createdAt: Date.now() };
+    const offer = { offerId: `F-${loadId}`, loadId, companyId: opt.carrierId, lane: load.lane, originId: load.origin, destinationId: load.destination, pallets: load.pallets, tempClass: load.tempClass, detourKm: opt.extraKm, extraMin: Math.round(opt.extraKm * 2.3), earningsEstimate: round(opt.quote * (load.exclusive ? EXCLUSIVE_MULTIPLIER : 1) * (1 - this.price.takeRate - this.price.referralRate) - opt.extraCost, 0), tempFit: true, isBackhaul: opt.isBackhaul, expiresInSec: 180, status: "SHOWN" as const, version: 1, createdAt: Date.now() };
     this.offers.unshift(offer);
     this.pinned = pv ? pv.after : null;
     return { status: "APPLIED", offerId: offer.offerId };
