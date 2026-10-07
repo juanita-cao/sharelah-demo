@@ -114,7 +114,7 @@ export const zh: Record<string, string | string[]> = {
   "offerStatus.SHOWN": "待回复", "offerStatus.ACCEPTED": "已接受", "offerStatus.DECLINED": "已拒绝", "offerStatus.EXPIRED": "已过期", "offerStatus.STALE": "已失效",
   "ct.scope": "整个共享网络，所有货主和承运商合计（平台运营方视角）。基线 = 同样的货在不共享、不优化（场景 A）下的结果。", "ct.queue": "新货物", "ct.urgentInjected": "已注入紧急冷链货物", "ct.inject": "注入紧急货物", "ct.queueEmpty": "没有待处理的货物", "ct.urgent": "紧急", "ct.age": "{{s}} 前", "ct.map": "网络", "ct.optionsFor": "{{id}} 的方案", "ct.options": "方案", "ct.selectLoad": "请选择一批货物",
   "opt.truck": "卡车 · 承运商", "opt.extraKm": "增加公里", "opt.extraCost": "增加成本", "opt.slack": "余量", "opt.why": "为什么？", "opt.approve": "批准 ★", "opt.choose": "选择", "opt.none": "没有卡车能运送这批货，见下方排除列表", "opt.excluded": "已排除",
-  "exclude.TEMP_INCOMPATIBLE": "温度", "exclude.VEHICLE_NOT_DG_CAPABLE": "无危险品资质", "exclude.CAPACITY_PALLETS": "容量", "exclude.CARRIER_DECLINED": "该承运人已拒绝", "exclude.TIME_WINDOW": "时间窗",
+  "exclude.TEMP_INCOMPATIBLE": "温度", "exclude.VEHICLE_NOT_DG_CAPABLE": "无危险品资质", "exclude.CAPACITY_PALLETS": "容量", "exclude.CARRIER_DECLINED": "该承运人已拒绝", "exclude.NOT_PROFITABLE": "承运人无利润", "exclude.TIME_WINDOW": "时间窗",
   "profile.PROFIT": "利润优先", "profile.BALANCED": "均衡", "profile.GREEN": "绿色",
   "reopt.before": "之前", "reopt.after": "之后", "reopt.run": "重新优化全网", "reopt.floor": "收入下限", "reopt.cancel": "取消", "reopt.state": "求解", "reopt.idle": "空闲", "reopt.reviewTitle": "重新优化 — 复核",
   "reopt.discard": "放弃", "reopt.apply": "批准并应用", "reopt.floorInfeasible": "无法满足收入下限，阻碍的承运商：{{carriers}}", "reopt.changes": "变更（{{n}} 批货重新分配，{{locked}} 个已锁定保持不变）", "reopt.new": "新",

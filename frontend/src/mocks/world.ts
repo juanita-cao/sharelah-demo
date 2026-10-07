@@ -160,6 +160,8 @@ export class MockWorld {
       const r = hash(load.loadId + v.vehicleId);
       const extraKm = round(4 + r * 55, 1), extraCost = round(extraKm * (v.type === "DRY_VAN" ? 1.1 : 1.6) + 4 + hash(load.loadId + v.vehicleId + "k") * 12, 0);
       const co2 = round(extraKm * (v.type === "DRY_VAN" ? 0.19 : 0.27) * (0.5 + hash(load.loadId + v.vehicleId + "c") * 1.3), 1);
+      const quoteHere = listed ?? round(extraCost * 1.35 + 20, 0);
+      if (quoteHere * (load.exclusive ? EXCLUSIVE_MULTIPLIER : 1) * (1 - this.price.takeRate - this.price.referralRate) - extraCost <= 0) { excluded.push({ vehicleId: v.vehicleId, codes: ["NOT_PROFITABLE"] }); continue; }   // the carrier would lose money: never offered
       rows.push({ optionId: `O-${load.loadId}-${v.vehicleId}`, rank: 0, vehicleId: v.vehicleId, carrierId: v.carrierId, extraKm, extraCost, co2, utilDelta: round(0.1 + r * 0.35, 2),
         slackMin: Math.round(15 + (1 - r) * 80), isBackhaul: r < 0.28, quote: listed ?? round(extraCost * 1.35 + 20, 0), scoreParts: { cost: extraCost, emptyKm: extraKm, co2 } });
     }

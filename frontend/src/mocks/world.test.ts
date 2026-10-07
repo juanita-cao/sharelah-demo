@@ -53,3 +53,16 @@ describe("a carrier that declines an approved load", () => {
     expect(again.excluded.some((e) => e.vehicleId === opt.vehicleId && e.codes.includes("CARRIER_DECLINED"))).toBe(true);
   });
 });
+
+describe("an option that would lose the carrier money", () => {
+  it("is never offered: every row earns the carrier something, and the excluded ones say why", () => {
+    const w = new MockWorld();
+    w.geo = geo;
+    for (const l of w.loads) {
+      const o = w.options(l.loadId, "BALANCED");
+      for (const r of o.rows) expect(r.quote * (l.exclusive ? 1.6 : 1) * (1 - w.price.takeRate - w.price.referralRate) - r.extraCost).toBeGreaterThan(0);
+    }
+    const all = w.loads.flatMap((l) => w.options(l.loadId, "BALANCED").excluded);
+    expect(all.some((e) => e.codes.includes("NOT_PROFITABLE"))).toBe(true);
+  });
+});
