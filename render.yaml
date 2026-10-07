@@ -1,0 +1,24 @@
+services:
+  - type: web
+    runtime: static
+    name: sharelah-demo
+    rootDir: frontend
+    buildCommand: npm ci && npm run build:demo
+    staticPublishPath: dist
+    pullRequestPreviewsEnabled: false
+    domains:
+      - sharelah-demo.innerdrivestudio.com
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Robots-Tag
+        value: noindex
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable

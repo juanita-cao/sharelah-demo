@@ -1,0 +1,234 @@
+[
+ {
+  "id": "N-SG-PPWC",
+  "name": "Pasir Panjang Wholesale Centre",
+  "lat": 1.290606,
+  "lon": 103.778915,
+  "country": "SG",
+  "kind": "WHOLESALE"
+ },
+ {
+  "id": "N-SG-JFP",
+  "name": "Jurong Fishery Port",
+  "lat": 1.305168,
+  "lon": 103.704473,
+  "country": "SG",
+  "kind": "WHOLESALE"
+ },
+ {
+  "id": "N-SG-JURONG",
+  "name": "Jurong / Penjuru logistics area",
+  "lat": 1.319958,
+  "lon": 103.714795,
+  "country": "SG",
+  "kind": "INDUSTRIAL"
+ },
+ {
+  "id": "N-SG-TUAS",
+  "name": "Tuas logistics area",
+  "lat": 1.320287,
+  "lon": 103.64028,
+  "country": "SG",
+  "kind": "INDUSTRIAL"
+ },
+ {
+  "id": "N-SG-CHANGI",
+  "name": "Changi airfreight area",
+  "lat": 1.359913,
+  "lon": 103.988726,
+  "country": "SG",
+  "kind": "HUB"
+ },
+ {
+  "id": "N-SG-WOODLANDS",
+  "name": "Woodlands industrial area",
+  "lat": 1.439843,
+  "lon": 103.790112,
+  "country": "SG",
+  "kind": "INDUSTRIAL"
+ },
+ {
+  "id": "N-SG-WCP",
+  "name": "Woodlands Checkpoint",
+  "lat": 1.445496,
+  "lon": 103.76926,
+  "country": "SG",
+  "kind": "BORDER"
+ },
+ {
+  "id": "N-SG-TCP",
+  "name": "Tuas Checkpoint (Second Link)",
+  "lat": 1.336909,
+  "lon": 103.635759,
+  "country": "SG",
+  "kind": "BORDER"
+ },
+ {
+  "id": "N-MY-JB",
+  "name": "Johor Bahru",
+  "lat": 1.464916,
+  "lon": 103.763021,
+  "country": "MY",
+  "kind": "HUB"
+ },
+ {
+  "id": "N-MY-BSI",
+  "name": "Sultan Iskandar CIQ (Johor Bahru)",
+  "lat": 1.463973,
+  "lon": 103.766006,
+  "country": "MY",
+  "kind": "BORDER"
+ },
+ {
+  "id": "N-MY-TKUPANG",
+  "name": "Tanjung Kupang CIQ (Second Link)",
+  "lat": 1.352793,
+  "lon": 103.602839,
+  "country": "MY",
+  "kind": "BORDER"
+ },
+ {
+  "id": "N-MY-PGUDANG",
+  "name": "Pasir Gudang (Johor Port)",
+  "lat": 1.465883,
+  "lon": 103.904733,
+  "country": "MY",
+  "kind": "PORT"
+ },
+ {
+  "id": "N-MY-PTP",
+  "name": "Tanjung Pelepas Port",
+  "lat": 1.364055,
+  "lon": 103.547184,
+  "country": "MY",
+  "kind": "PORT"
+ },
+ {
+  "id": "N-MY-SENAI",
+  "name": "Senai",
+  "lat": 1.599999,
+  "lon": 103.64,
+  "country": "MY",
+  "kind": "INDUSTRIAL"
+ },
+ {
+  "id": "N-MY-KULAI",
+  "name": "Kulai",
+  "lat": 1.655837,
+  "lon": 103.600182,
+  "country": "MY",
+  "kind": "INDUSTRIAL"
+ },
+ {
+  "id": "N-MY-KLUANG",
+  "name": "Kluang",
+  "lat": 2.029994,
+  "lon": 103.320002,
+  "country": "MY",
+  "kind": "FARM"
+ },
+ {
+  "id": "N-MY-MELAKA",
+  "name": "Melaka industrial area",
+  "lat": 2.200016,
+  "lon": 102.250069,
+  "country": "MY",
+  "kind": "INDUSTRIAL"
+ },
+ {
+  "id": "N-MY-SEREMBAN",
+  "name": "Seremban / Senawang",
+  "lat": 2.699891,
+  "lon": 101.970058,
+  "country": "MY",
+  "kind": "INDUSTRIAL"
+ },
+ {
+  "id": "N-MY-PDICKSON",
+  "name": "Port Dickson",
+  "lat": 2.5209,
+  "lon": 101.799997,
+  "country": "MY",
+  "kind": "PORT"
+ },
+ {
+  "id": "N-MY-PKLANG",
+  "name": "Port Klang (Northport)",
+  "lat": 3.000774,
+  "lon": 101.36489,
+  "country": "MY",
+  "kind": "PORT"
+ },
+ {
+  "id": "N-MY-KL",
+  "name": "Kuala Lumpur (Sungai Besi)",
+  "lat": 3.110144,
+  "lon": 101.686998,
+  "country": "MY",
+  "kind": "HUB"
+ },
+ {
+  "id": "N-MY-SELAYANG",
+  "name": "Selayang wholesale market",
+  "lat": 3.250006,
+  "lon": 101.649966,
+  "country": "MY",
+  "kind": "WHOLESALE"
+ },
+ {
+  "id": "N-MY-TAPAH",
+  "name": "Tapah",
+  "lat": 4.200394,
+  "lon": 101.260419,
+  "country": "MY",
+  "kind": "HUB"
+ },
+ {
+  "id": "N-MY-CAMERON",
+  "name": "Cameron Highlands (Brinchang)",
+  "lat": 4.4699,
+  "lon": 101.380005,
+  "country": "MY",
+  "kind": "FARM"
+ },
+ {
+  "id": "N-MY-IPOH",
+  "name": "Ipoh",
+  "lat": 4.598795,
+  "lon": 101.080189,
+  "country": "MY",
+  "kind": "HUB"
+ },
+ {
+  "id": "N-MY-TAIPING",
+  "name": "Taiping / Kamunting",
+  "lat": 4.859961,
+  "lon": 100.729915,
+  "country": "MY",
+  "kind": "INDUSTRIAL"
+ },
+ {
+  "id": "N-MY-PENANG",
+  "name": "Penang Port (Butterworth)",
+  "lat": 5.400003,
+  "lon": 100.364992,
+  "country": "MY",
+  "kind": "PORT"
+ },
+ {
+  "id": "N-MY-PRAI",
+  "name": "Prai industrial area",
+  "lat": 5.369902,
+  "lon": 100.390051,
+  "country": "MY",
+  "kind": "INDUSTRIAL"
+ },
+ {
+  "id": "N-MY-KULIM",
+  "name": "Kulim Hi-Tech Park",
+  "lat": 5.360462,
+  "lon": 100.565272,
+  "country": "MY",
+  "kind": "INDUSTRIAL"
+ }
+]
