@@ -82,6 +82,8 @@ export function AppShell() {
           <div className={`app-content${topNav ? " wide" : ""}`} key={`${company.id}${pathname.split("/")[1]}`}>{allowed(company.kind, pathname) ? <Outlet /> : <Navigate to={HOME[company.kind]} replace />}</div>
           <footer className="app-status">
             {t("shell.status", { world: state.data?.worldHash ?? "—", epoch: state.data?.epoch ?? "—" })} · <a onClick={confirmReset}>{t("shell.reset")}</a>
+            <div style={{ marginTop: 6 }}>{t("footer.ai")}</div>
+            <div style={{ marginTop: 2, opacity: 0.85 }}>© {new Date().getFullYear()} InnerDrive Studio. {t("footer.rights")}</div>
           </footer>
         </main>
       </div>

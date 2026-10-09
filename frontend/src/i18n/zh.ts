@@ -91,7 +91,7 @@ export const zh: Record<string, string | string[]> = {
   "refer.income": "推荐费 {{amount}}", "refer.rateOn": "你带来的货由别家承运商运送时，你拿报价的 {{pct}}%。", "refer.rateOff": "目前推荐费率是 0%：你带来的货由别家承运商运送时，你一分钱也拿不到。这个费率由平台设定。",
   "refer.customer": "客户", "refer.customerPh": "这是谁的货？", "refer.needCustomer": "请填写客户", "refer.cta": "送进共享池", "refer.sent": "已送进共享池", "refer.mine": "我带进来的货",
   "refer.servedByMe": "由你自己的卡车运送", "refer.servedByOther": "由别家承运商运送 · 你的推荐费 {{amount}}", "refer.waiting": "等待卡车",
-  "app.name": "ShareLah", "banner.mock": "演示数据 — 模拟后端、虚构公司，所有数字都只是占位", "header.language": "语言", loading: "加载中…",
+  "app.name": "ShareLah", "footer.ai": "AI 生成内容可能有误，请在采取行动前核实重要信息。", "footer.rights": "版权所有。", "banner.mock": "演示数据 — 模拟后端、虚构公司，所有数字都只是占位", "header.language": "语言", loading: "加载中…",
   "nav.marketplace": "货运市场", "nav.controlTower": "控制塔", "nav.analysis": "分析", "nav.map": "地图", "nav.settings": "设置", "nav.guide": "指南",
   "shell.syncFailed": "同步失败", "shell.syncing": "同步中…", "shell.synced": "{{s}} 秒前已同步", "shell.resetTitle": "重置场景？", "shell.resetBody": "所有已发布的货、报价和审批将恢复为初始场景。",
   "shell.resetDone": "场景已重置", "shell.shippers": "货主", "shell.carriers": "承运商", "shell.status": "世界 {{world}} · 价格表 v1（假设）· 纪元 {{epoch}}", "shell.reset": "重置场景",
