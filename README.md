@@ -121,6 +121,7 @@ frontend/
   src/lib/        replay of the recorded month, alerts and sounds
   src/i18n/       English and Chinese texts
   public/demo/    the recorded simulated month
+docs/             design documents ([optimisation](docs/design_optimization.md), [front end](docs/design_frontend.md)) and screenshots
 render.yaml       static site on Render
 ```
 
@@ -132,3 +133,7 @@ Not in this build: the optimisation backend, live runs, real accounts and a data
 ## Stack
 
 React 18, TypeScript, Vite, Ant Design 5, TanStack Query, Leaflet with OpenStreetMap tiles, MSW (mock service worker), i18next, Vitest.
+
+---
+
+Part of [InnerDrive Studio](https://innerdrivestudio.com) — maritime and logistics decision systems · [Project page](https://innerdrivestudio.com/products/logistics-transport-optimization/sharelah)
